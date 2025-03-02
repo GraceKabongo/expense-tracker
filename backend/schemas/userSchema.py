@@ -1,0 +1,18 @@
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+from datetime import datetime
+
+class UserSchemaIn(BaseModel):
+    firstname : str = Field(min_length=3, max_length=24)
+    lastname: str =  Field(min_length=3, max_length=24)
+    email: EmailStr
+    password : str = Field(min_length=6, max_length=1024)
+
+
+class UserSchemaOut(BaseModel):
+    id: str
+    firstname : str
+    lastname: str
+    email: EmailStr
+    created_at: datetime
+    updated_at: datetime
