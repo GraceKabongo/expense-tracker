@@ -1,14 +1,20 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from sqlmodel import SQLModel
 from routes import categories, user, expenses
 from services import db
 
+#database
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    SQLModel.metadata.create_all(db.engine)
+    yield
 
-app = FastAPI()
+
+
+app = FastAPI(lifespan=lifespan)
 prefix = "/api"
 
-#database
-#SQLModel.metadata.create_all(db.engine)
 
 
 app.include_router(categories.router, prefix=prefix)

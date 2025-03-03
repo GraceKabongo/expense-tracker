@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from typing import Annotated, Optional
 from datetime import datetime
+
 
 class UserSchemaIn(BaseModel):
     firstname : str = Field(min_length=3, max_length=24)
@@ -14,5 +15,12 @@ class UserSchemaOut(BaseModel):
     firstname : str
     lastname: str
     email: EmailStr
+    password: Annotated[str, Field(exclude=True)]
     created_at: datetime
     updated_at: datetime
+
+
+class UserSchemaUpdate(UserSchemaIn):
+    firstname : Optional[str] = None
+    lastname: Optional[str] = None
+    email: Optional[EmailStr] = None

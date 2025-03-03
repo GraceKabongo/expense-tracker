@@ -8,4 +8,4 @@ sqlite_url = f"sqlite:///{sqlite_filename}"
 
 engine = create_engine(sqlite_url, echo=False)
 
-session = Session(engine)
+user_session = Session(engine)
