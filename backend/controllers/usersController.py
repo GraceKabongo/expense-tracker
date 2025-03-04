@@ -1,21 +1,17 @@
 from models.userModel import User
 from schemas.userSchema import UserSchemaIn, UserSchemaOut, UserSchemaUpdate
 from services.db import user_session
+from utils.utils import is_email_taken
 from fastapi import HTTPException
 from sqlmodel import select
 from uuid import UUID
-from bcrypt import gensalt, hashpw
+from utils.utils import hash_password
+
 
 def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
     try:
-        #password hashing
-        password = data.password.encode()
-        salt= gensalt()
-        hashed_password = hashpw(password, salt)
-
-
         # create a new user
-        new_user = User(first_name=data.firstname, last_name=data.lastname, email=data.email, password=hashed_password.decode())
+        new_user = User(first_name=data.firstname, last_name=data.lastname, email=data.email, password=hash_password(data.password))
         with user_session:
             user_session.add(new_user)
             user_session.commit()
@@ -56,8 +52,43 @@ def get_user(id: str) -> UserSchemaOut:
         )
 
 
-def update_user(id: str, data):
-    pass
+def update_user(id: str, data: UserSchemaUpdate):
+    with user_session:
+
+        statement = select(User).where(User.id == UUID(id))
+        user = user_session.exec(statement=statement).first()
+
+        if user is None :
+            raise HTTPException(404, "invalid id")
+        if is_email_taken(user_session, data.email):
+            raise HTTPException(422, 'Email taken')
+        
+
+        if data.email != None:
+            user.email = data.email
+        if data.firstname != None:
+            user.first_name = data.firstname   
+        if data.lastname != None:
+            user.last_name = data.lastname
+            
+        
+        user_session.add(user)
+        user_session.commit()
+        user_session.refresh(user)
+
+            
+
+    return UserSchemaOut(
+            id         = str(user.id),
+            firstname  = user.first_name,
+            lastname   = user.last_name,
+            email      = user.email,
+            password   = user.password,
+            created_at = user.created_at,
+            updated_at = user.updated_at
+        )
+
+    
 
 
 def delete_user():

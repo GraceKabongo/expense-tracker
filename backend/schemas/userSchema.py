@@ -20,7 +20,7 @@ class UserSchemaOut(BaseModel):
     updated_at: datetime
 
 
-class UserSchemaUpdate(UserSchemaIn):
+class UserSchemaUpdate(BaseModel):
     firstname : Optional[str] = None
     lastname: Optional[str] = None
     email: Optional[EmailStr] = None
