@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from uuid import UUID
 from schemas.userSchema import UserSchemaIn, UserSchemaOut, UserSchemaUpdate
-from controllers.usersController import create_new_user, get_user, update_user
+from controllers.usersController import create_new_user, get_user, update_user, delete_user
 
 router = APIRouter(
     prefix="/users",
@@ -30,3 +30,6 @@ def edit_user(id: str, data: UserSchemaUpdate):
     return update_user(id, data)
 
 
+@router.delete("/{id}") #TODO: once auth implemented no need of using id paramater
+def remove_user(id: str):
+    return delete_user(id)

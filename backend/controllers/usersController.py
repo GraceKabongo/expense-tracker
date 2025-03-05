@@ -10,6 +10,9 @@ from utils.utils import hash_password
 
 def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
     try:
+        if data is None:
+            raise HTTPExceptiona(422, "empty data") #TODO: error for empty data
+        
         # create a new user
         new_user = User(first_name=data.firstname, last_name=data.lastname, email=data.email, password=hash_password(data.password))
         with user_session:
@@ -20,8 +23,7 @@ def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
     except Exception as e:
         user_session.rollback() # Rollback on error
         raise HTTPException(422, "email already taken")#TODO : implement Custom exception in the case where the email is taken       
-    #except HTTPException as eh:
-        #print(eh) #TODO: error for empty data
+
     
     return UserSchemaOut(
         id         = str(new_user.id),
@@ -35,47 +37,55 @@ def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
 
 
 def get_user(id: str) -> UserSchemaOut:
-    with user_session:
-        statement = select(User).where(User.id == UUID(id))
-        user = user_session.exec(statement=statement).first()
-        if user is None:
-            raise HTTPException(404, "invalid id") #TODO custom error
-        
-        return UserSchemaOut(
-            id         = str(user.id),
-            firstname  = user.first_name,
-            lastname   = user.last_name,
-            email      = user.email,
-            password   = user.password,
-            created_at = user.created_at,
-            updated_at = user.updated_at
-        )
+
+    try:
+        with user_session:
+            statement = select(User).where(User.id == UUID(id))
+            user = user_session.exec(statement=statement).first()
+            if user is None:
+                raise HTTPException(404, "invalid id") #TODO custom error
+    
+    except Exception:
+        raise HTTPException(404, "invalid id")
+    
+    return UserSchemaOut(
+        id         = str(user.id),
+        firstname  = user.first_name,
+        lastname   = user.last_name,
+        email      = user.email,
+        password   = user.password,
+        created_at = user.created_at,
+        updated_at = user.updated_at
+    )
 
 
 def update_user(id: str, data: UserSchemaUpdate):
-    with user_session:
+    try:
+        with user_session:
 
-        statement = select(User).where(User.id == UUID(id))
-        user = user_session.exec(statement=statement).first()
+            statement = select(User).where(User.id == UUID(id))
+            user = user_session.exec(statement=statement).first()
 
-        if user is None :
-            raise HTTPException(404, "invalid id")
-        if is_email_taken(user_session, data.email):
-            raise HTTPException(422, 'Email taken')
-        
-
-        if data.email != None:
-            user.email = data.email
-        if data.firstname != None:
-            user.first_name = data.firstname   
-        if data.lastname != None:
-            user.last_name = data.lastname
+            if user is None :
+                raise HTTPException(404, "invalid id")
+            if is_email_taken(user_session, data.email):
+                raise HTTPException(422, 'Email taken')
             
-        
-        user_session.add(user)
-        user_session.commit()
-        user_session.refresh(user)
 
+            if data.email != None:
+                user.email = data.email
+            if data.firstname != None:
+                user.first_name = data.firstname   
+            if data.lastname != None:
+                user.last_name = data.lastname
+                
+        
+            user_session.add(user)
+            user_session.commit()
+            user_session.refresh(user)
+
+    except Exception as e :
+        raise HTTPException(404, "invalid id")
             
 
     return UserSchemaOut(
@@ -91,5 +101,28 @@ def update_user(id: str, data: UserSchemaUpdate):
     
 
 
-def delete_user():
-    pass
+def delete_user(id:str):
+    try:
+        with user_session:
+
+            statement = select(User).where(User.id == UUID(id))
+            user = user_session.exec(statement=statement).first()
+
+            if user is None :
+                raise HTTPException(404, "invalid id")
+            
+            user_session.delete(user)
+            user_session.commit()
+    
+    except Exception as e:
+        raise HTTPException(404, "invalid id")
+
+    return UserSchemaOut(
+            id         = str(user.id),
+            firstname  = user.first_name,
+            lastname   = user.last_name,
+            email      = user.email,
+            password   = user.password,
+            created_at = user.created_at,
+            updated_at = user.updated_at
+        )
