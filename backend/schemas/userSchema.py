@@ -13,7 +13,7 @@ class UserSchemaIn(BaseModel):
 class UserSchemaOut(BaseModel):
     id: str
     firstname : str
-    lastname: str
+    lastname: str  
     email: EmailStr
     password: Annotated[str, Field(exclude=True)]
     created_at: datetime
