@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from controllers.categorieController import create_new_categorie, get_all_categorie, get_categorie
+from controllers.categorieController import create_new_categorie, get_all_categorie, get_categorie, update_categorie, delete_categorie
 from schemas.categorieSchema import CategorieSchemaIn, CategorieSchemaOut
 from typing import List
 
@@ -25,3 +25,13 @@ def fetch_all_categorie():
 @router.get("/{id}", response_model=CategorieSchemaOut)
 def fetch_categorie(id:str):
     return get_categorie(id)
+
+
+@router.put("/{id}", response_model=CategorieSchemaOut)
+def edit_categorie(id:str, data: CategorieSchemaIn):
+    return update_categorie(id, data)
+
+
+@router.delete("/{id}", response_model=CategorieSchemaOut)
+def remove_categorie(id:str):
+    return delete_categorie(id)

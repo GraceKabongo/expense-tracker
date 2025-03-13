@@ -60,5 +60,53 @@ def get_categorie(id:str) -> CategorieSchemaOut:
         id=str(categorie.id),
         name= categorie.name
     )
+
+
+def update_categorie(id: str, data: CategorieSchemaIn) -> CategorieSchemaOut:
+    try:
+        with categorie_session:
+            statement = select(Categorie).where(Categorie.id == UUID(id))
+            categorie = categorie_session.exec(statement=statement).first()
+            
+            if categorie is None:
+                raise HTTPException(404, "invalid id") #TODO custom error
+
+            if data.name != None:
+                categorie.name = data.name
+
+            categorie_session.add(categorie)
+            categorie_session.commit()
+            categorie_session.refresh(categorie)
+            
     
+    except Exception as e:
+        print(e)
+        raise HTTPException(500, f"{e}")
     
+    return CategorieSchemaOut(
+        id= str(categorie.id),
+        name=categorie.name
+    )
+
+
+def delete_categorie(id:str) -> CategorieSchemaOut:
+    try:
+        with categorie_session:
+            statement = select(Categorie).where(Categorie.id == UUID(id))
+            categorie = categorie_session.exec(statement=statement).first()
+            
+            if categorie is None:
+                raise HTTPException(404, "invalid id") #TODO custom error
+
+            categorie_session.delete(categorie)
+            categorie_session.commit()
+            
+    
+    except Exception as e:
+        print(e)
+        raise HTTPException(500, f"{e}")
+    
+    return CategorieSchemaOut(
+        id=str(categorie.id),
+        name= categorie.name
+    )
