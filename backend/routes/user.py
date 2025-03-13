@@ -1,16 +1,16 @@
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 from uuid import UUID
 from schemas.userSchema import UserSchemaIn, UserSchemaOut, UserSchemaUpdate
 from controllers.usersController import create_new_user, get_user, update_user, delete_user
+from models.userModel import User
+from auth.authentication import get_current_user
 
 router = APIRouter(
     prefix="/users",
     tags=["users"],
 )
 
-@router.get("/")
-def root():
-    return "users root "
 
 
 @router.post("/create-user", response_model=UserSchemaOut)
@@ -19,9 +19,9 @@ def create_user(data: UserSchemaIn):
     return user
 
 
-@router.get("/{id}", response_model=UserSchemaOut) #TODO: once auth implemented no need of using id paramater
-def fetch_user(id: str):
-    return get_user(id)
+@router.get("/", response_model=UserSchemaOut) #TODO: once auth implemented no need of using id paramater
+def fetch_user(current_user: Annotated[User, Depends(get_current_user)]):
+    return get_user(str(current_user.id))
 
 
 

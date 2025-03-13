@@ -22,6 +22,7 @@ def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
     
     except Exception as e:
         user_session.rollback() # Rollback on error
+        print(e)
         raise HTTPException(422, "email already taken")#TODO : implement Custom exception in the case where the email is taken       
 
     
