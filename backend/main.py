@@ -6,6 +6,7 @@ from auth.routes import auth
 from services import db
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 #database

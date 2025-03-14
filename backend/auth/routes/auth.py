@@ -33,16 +33,27 @@ class OAuth2EmailRequestForm(OAuth2PasswordRequestForm):
 
 @router.post("/login")
 async def login_for_access_token(form_data: Annotated[OAuth2EmailRequestForm, Depends()],) -> Token:
+    try:
+        user = authenticate_user(user_session, form_data.username, form_data.password)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
-    user = authenticate_user(user_session, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        access_token_expires = timedelta(
+            minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15"))  # Default to 15 minutes
         )
-    access_token_expires = timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
-    access_token = create_access_token(
-        data={"sub": str(user.id)}, expires_delta=access_token_expires
-    )
+        access_token = create_access_token(
+            data={"sub": str(user.id)}, expires_delta=access_token_expires
+        )
+
+    except Exception as e:
+        print("Login Error:", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error, please try again later",
+        )
+    
     return Token(access_token=access_token, token_type="bearer")

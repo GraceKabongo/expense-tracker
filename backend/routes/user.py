@@ -19,17 +19,17 @@ def create_user(data: UserSchemaIn):
     return user
 
 
-@router.get("/", response_model=UserSchemaOut) #TODO: once auth implemented no need of using id paramater
+@router.get("/", response_model=UserSchemaOut) 
 def fetch_user(current_user: Annotated[User, Depends(get_current_user)]):
     return get_user(str(current_user.id))
 
 
 
-@router.put("/{id}") #TODO: once auth implemented no need of using id paramater
-def edit_user(id: str, data: UserSchemaUpdate):
-    return update_user(id, data)
+@router.put("/update-user") 
+def edit_user(current_user: Annotated[User, Depends(get_current_user)], data: UserSchemaUpdate):
+    return update_user(str(current_user.id), data)
 
 
-@router.delete("/{id}") #TODO: once auth implemented no need of using id paramater
-def remove_user(id: str):
-    return delete_user(id)
+@router.delete("/delete-user") 
+def remove_user(current_user: Annotated[User, Depends(get_current_user)]):
+    return delete_user(str(current_user.id))

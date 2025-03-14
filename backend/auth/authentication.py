@@ -12,7 +12,7 @@ from models.tokenModel import TokenData
 from services.db import user_session
 import os
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 def verify_password(password, hashed_password):
     return checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
@@ -69,7 +69,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
 
     try:
-        payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
+        payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=os.getenv("ALGORITHM"))
         user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
