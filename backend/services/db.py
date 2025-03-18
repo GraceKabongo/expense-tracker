@@ -11,3 +11,4 @@ engine = create_engine(sqlite_url, echo=False)
 #sessions
 user_session = Session(engine)
 categorie_session = Session(engine)
+expense_session = Session(engine)

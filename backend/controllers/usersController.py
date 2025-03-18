@@ -30,6 +30,7 @@ def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
         id         = str(new_user.id),
         firstname  = new_user.first_name,
         lastname   = new_user.last_name,
+        income     = new_user.income,
         email      = new_user.email,
         password   = new_user.password,
         created_at = new_user.created_at,
@@ -54,6 +55,7 @@ def get_user(id: str) -> UserSchemaOut:
         firstname  = user.first_name,
         lastname   = user.last_name,
         email      = user.email,
+        income     = user.income,
         password   = user.password,
         created_at = user.created_at,
         updated_at = user.updated_at
@@ -79,6 +81,8 @@ def update_user(id: str, data: UserSchemaUpdate):
                 user.first_name = data.firstname   
             if data.lastname != None:
                 user.last_name = data.lastname
+            if data.income != None:
+                user.income = data.income
                 
         
             user_session.add(user)
@@ -94,6 +98,7 @@ def update_user(id: str, data: UserSchemaUpdate):
             firstname  = user.first_name,
             lastname   = user.last_name,
             email      = user.email,
+            income     = user.income,
             password   = user.password,
             created_at = user.created_at,
             updated_at = user.updated_at
@@ -123,6 +128,7 @@ def delete_user(id:str):
             firstname  = user.first_name,
             lastname   = user.last_name,
             email      = user.email,
+            income     = user.income,
             password   = user.password,
             created_at = user.created_at,
             updated_at = user.updated_at

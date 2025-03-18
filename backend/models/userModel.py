@@ -9,6 +9,7 @@ class User(SQLModel, table=True):
     last_name :str = Field(min_length=3, max_length=24)
     email : str = Field(unique=True)
     password: str
+    income: float = Field(default=0)
     created_at : datetime = Field(default_factory=datetime.now, nullable=False)
     updated_at : datetime = Field(default_factory=datetime.now, nullable=False)
 

@@ -10,7 +10,7 @@ from sqlmodel import select
 
 def create_new_categorie(data: CategorieSchemaIn) -> CategorieSchemaOut:
 
-    new_categorie = Categorie(name=data.name)
+    new_categorie = Categorie(**data.model_dump())
     with categorie_session:
         categorie_session.add(new_categorie)
         categorie_session.commit()
@@ -50,7 +50,7 @@ def get_categorie(id:str) -> CategorieSchemaOut:
             categorie = categorie_session.exec(statement=statement).first()
             
             if categorie is None:
-                raise HTTPException(404, "invalid id") #TODO custom error
+                raise HTTPException(404, "invalid id") 
     
     except Exception as e:
         print(e)
@@ -69,7 +69,7 @@ def update_categorie(id: str, data: CategorieSchemaIn) -> CategorieSchemaOut:
             categorie = categorie_session.exec(statement=statement).first()
             
             if categorie is None:
-                raise HTTPException(404, "invalid id") #TODO custom error
+                raise HTTPException(404, "invalid id") 
 
             if data.name != None:
                 categorie.name = data.name
@@ -96,7 +96,7 @@ def delete_categorie(id:str) -> CategorieSchemaOut:
             categorie = categorie_session.exec(statement=statement).first()
             
             if categorie is None:
-                raise HTTPException(404, "invalid id") #TODO custom error
+                raise HTTPException(404, "invalid id") 
 
             categorie_session.delete(categorie)
             categorie_session.commit()

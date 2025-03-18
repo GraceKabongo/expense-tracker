@@ -13,5 +13,5 @@ class Expense(SQLModel, table=True):
     start_date: datetime = Field(default=None, nullable=True)
     end_date: datetime = Field(default=None, nullable=True)
 
-    categorie_id: UUID | None = Field(default=None, foreign_key="categorie.id")
-    user_id: UUID | None = Field(default=None, foreign_key="user.id")
+    categorie_id: str | None = Field(default=None, foreign_key="categorie.id")
+    user_id: str | None = Field(default=None, foreign_key="user.id")
