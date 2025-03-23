@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from sqlmodel import select
 from uuid import UUID
 from utils.utils import hash_password
+from datetime import datetime
 
 
 def create_new_user(data: UserSchemaIn) -> UserSchemaOut:
@@ -83,7 +84,8 @@ def update_user(id: str, data: UserSchemaUpdate):
                 user.last_name = data.lastname
             if data.income != None:
                 user.income = data.income
-                
+       
+            user.updated_at = datetime.now()           
         
             user_session.add(user)
             user_session.commit()

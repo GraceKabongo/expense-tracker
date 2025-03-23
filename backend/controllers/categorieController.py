@@ -6,6 +6,7 @@ from models.categorieModel import Categorie
 from services.db import categorie_session
 from uuid import UUID
 from sqlmodel import select
+from datetime import datetime
 
 
 def create_new_categorie(data: CategorieSchemaIn) -> CategorieSchemaOut:
@@ -18,7 +19,9 @@ def create_new_categorie(data: CategorieSchemaIn) -> CategorieSchemaOut:
     
     return CategorieSchemaOut(
         id = str(new_categorie.id),
-        name= new_categorie.name
+        name= new_categorie.name,
+        created_at=new_categorie.created_at,
+        updated_at=new_categorie.updated_at
     ) 
 
 
@@ -31,12 +34,13 @@ def get_all_categorie() -> List[CategorieSchemaOut]:
             for categorie in categories:
                 data.append(CategorieSchemaOut(
                     id=str(categorie.id),
-                    name=categorie.name
+                    name=categorie.name,
+                    created_at= categorie.created_at,
+                    updated_at= categorie.updated_at
                     ))   
     
     except Exception as e:
-        print(e)
-        raise HTTPException(500, "server error")
+        raise e
 
     return data
 
@@ -57,9 +61,11 @@ def get_categorie(id:str) -> CategorieSchemaOut:
         raise HTTPException(500, "server error")
 
     return CategorieSchemaOut(
-        id=str(categorie.id),
-        name= categorie.name
-    )
+                    id=str(categorie.id),
+                    name=categorie.name,
+                    created_at= categorie.created_at,
+                    updated_at= categorie.updated_at
+                    )
 
 
 def update_categorie(id: str, data: CategorieSchemaIn) -> CategorieSchemaOut:
@@ -73,6 +79,8 @@ def update_categorie(id: str, data: CategorieSchemaIn) -> CategorieSchemaOut:
 
             if data.name != None:
                 categorie.name = data.name
+            
+            categorie.updated_at = datetime.now()
 
             categorie_session.add(categorie)
             categorie_session.commit()
@@ -84,9 +92,11 @@ def update_categorie(id: str, data: CategorieSchemaIn) -> CategorieSchemaOut:
         raise HTTPException(500, f"{e}")
     
     return CategorieSchemaOut(
-        id= str(categorie.id),
-        name=categorie.name
-    )
+                    id=str(categorie.id),
+                    name=categorie.name,
+                    created_at= categorie.created_at,
+                    updated_at= categorie.updated_at
+                    )
 
 
 def delete_categorie(id:str) -> CategorieSchemaOut:
@@ -107,6 +117,8 @@ def delete_categorie(id:str) -> CategorieSchemaOut:
         raise HTTPException(500, f"{e}")
     
     return CategorieSchemaOut(
-        id=str(categorie.id),
-        name= categorie.name
-    )
+                    id=str(categorie.id),
+                    name=categorie.name,
+                    created_at= categorie.created_at,
+                    updated_at= categorie.updated_at
+                    )
