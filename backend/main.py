@@ -5,7 +5,7 @@ from routes import categories, user, expenses
 from auth.routes import auth
 from services import db
 from dotenv import load_dotenv
-
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
@@ -20,6 +20,19 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 prefix = "/api"
+
+
+#Middleware
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 

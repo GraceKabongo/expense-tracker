@@ -16,4 +16,4 @@ class Expense(SQLModel, table=True):
     updated_at : datetime = Field(default_factory=datetime.now, nullable=False)
 
     categorie_id: str | None = Field(default=None, foreign_key="categorie.id")
-    user_id: str | None = Field(default=None, foreign_key="user.id")
+    user_id: str | None = Field(default=None, foreign_key="user.id", ondelete="CASCADE")
