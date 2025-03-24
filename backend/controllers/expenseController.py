@@ -5,6 +5,7 @@ from models.categorieModel import Categorie
 from fastapi import HTTPException
 from sqlmodel import select
 from uuid import UUID
+from datetime import datetime
 
 def create_new_expense(data: ExpenseSchema, user_id: str):
     try:
@@ -104,7 +105,7 @@ def update_expense(id:str, data: ExpenseSchemaUpdate):
                 expense.start_date = data.start_date
                 expense.end_date = data.end_date
             
-
+            expense.updated_at = datetime.now()
             
             expense_session.add(expense)
             expense_session.commit()
@@ -114,3 +115,21 @@ def update_expense(id:str, data: ExpenseSchemaUpdate):
         raise e
 
     return ExpenseSchema(**expense.model_dump())
+
+
+def delete_expense(id: str):
+    try:
+        with expense_session:
+            statement = select(Expense).where(Expense.id == UUID(id))
+            expense = expense_session.exec(statement=statement).first()
+
+            if expense is None:
+                raise HTTPException(404, "expense cannot be found")
+            
+            expense_session.delete(expense)
+            expense_session.commit()
+
+    except Exception as e :
+        raise e
+    
+    return Expense(**expense.model_dump())

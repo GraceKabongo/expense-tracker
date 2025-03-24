@@ -17,8 +17,8 @@ class UserSchemaOut(BaseModel):
     email: EmailStr
     income: float
     password: Annotated[str, Field(exclude=True)]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]= None
+    updated_at: Optional[datetime] = None
 
 
 class UserSchemaUpdate(BaseModel):

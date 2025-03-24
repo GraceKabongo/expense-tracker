@@ -12,8 +12,8 @@ class ExpenseSchema(BaseModel):
     is_recurring: Optional[bool]= Field(default=False)
     start_date: Optional[datetime] = Field(default=None, nullable=True)
     end_date: Optional[datetime] = Field(default=None, nullable=True)
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]= None
+    updated_at: Optional[datetime] = None
 
 
 class ExpenseSchemaUpdate(BaseModel):

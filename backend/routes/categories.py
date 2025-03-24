@@ -29,11 +29,11 @@ def fetch_categorie(id:str, _: Annotated[User, Depends(get_current_user)]):
     return get_categorie(id)
 
 
-@router.put("/{id}", response_model=CategorieSchemaOut)
+@router.put("/update-categorie/{id}", response_model=CategorieSchemaOut)
 def edit_categorie(id:str, data: CategorieSchemaIn, _: Annotated[User, Depends(get_current_user)]):
     return update_categorie(id, data)
 
 
-@router.delete("/{id}", response_model=CategorieSchemaOut)
+@router.delete("/delete-categorie/{id}", response_model=CategorieSchemaOut)
 def remove_categorie(id:str, _: Annotated[User, Depends(get_current_user)]):
     return delete_categorie(id)
